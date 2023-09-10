@@ -1,5 +1,5 @@
 {
-  description = "investbot flake";
+  description = "basegbot flake";
 
   inputs = {
     nixpkgs = {
@@ -13,11 +13,12 @@
     };
   in {
     devShells.${system}.default = pkgs.mkShell {
-      name = "investbot";
+      name = "basegbot-devenv";
       packages = with pkgs; [
         nil
         alejandra
         clippy
+        cargo
         rustc
         rustup
         rustfmt
