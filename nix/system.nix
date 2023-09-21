@@ -10,6 +10,7 @@ in {
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "basegbot";
 
@@ -38,6 +39,7 @@ in {
   };
 
   users = {
+    defaultUserShell = pkgs.nushell;
     users.basegbot = {
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEFgkIK+VR+xpAL85buL9ocql82kcVCcHbZyaytVDYB6 basegbot"
