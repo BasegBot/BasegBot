@@ -23,6 +23,7 @@
         rustup
         rustfmt
         rust-analyzer
+        crate2nix
       ];
     };
   };
