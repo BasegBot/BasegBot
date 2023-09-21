@@ -8,7 +8,7 @@ _: {
 
     serviceConfig = {
       User = "root";
-      ExecStart = "/nix/store/k13z1421f2h0b2lk14p6n7dnyv52d6mx-user-environment/bin/basegbot";
+      ExecStart = "/etc/profiles/per-user/basegbot/bin/basegbot";
       Restart = "on-failure";
       RestartSec = 60;
     };
