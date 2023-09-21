@@ -11,6 +11,7 @@
     pkgs = import nixpkgs {
       inherit system;
     };
+    lib = nixpkgs.lib;
   in {
     devShells.${system}.default = pkgs.mkShell {
       name = "basegbot-devenv";
@@ -25,6 +26,14 @@
         rust-analyzer
         crate2nix
       ];
+    };
+    nixosConfigurations = {
+      basegbot = lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./nix/system.nix
+        ];
+      };
     };
   };
 }
