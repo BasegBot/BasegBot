@@ -5,8 +5,12 @@
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
+    nh = {
+      url = "github:viperML/nh";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = {nixpkgs, ...}: let
+  outputs = {nixpkgs, ...} @ inputs: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
@@ -32,6 +36,7 @@
         inherit system;
         modules = [
           ./nix/system.nix
+          inputs.nh.nixosModules.default
         ];
       };
     };
