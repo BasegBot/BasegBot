@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   cargo_nix = pkgs.callPackage ../Cargo.nix {};
   basegbot = cargo_nix.rootCrate.build;
 in {
@@ -8,8 +12,21 @@ in {
     ./service.nix
   ];
 
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
+  documentation = {
+    enable = true;
+    doc.enable = false;
+    man.enable = true;
+    dev.enable = false;
+  };
+
+  boot.loader = {
+    grub = {
+      enable = true;
+      device = "/dev/sda";
+      configurationLimit = 10;
+    };
+  };
+
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   networking.hostName = "basegbot";
@@ -21,17 +38,22 @@ in {
   i18n.defaultLocale = "en_US.UTF-8";
 
   services.tailscale.enable = true;
+  services.fstrim.enable = true;
 
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
+      PermitRootLogin = lib.mkForce "no";
+      PasswordAuthentication = lib.mkForce "false";
+      PubkeyAuthentication = lib.mkForce "true";
     };
   };
-  programs.direnv.enable = true;
-  programs.direnv.loadInNixShell = true;
-  programs.direnv.nix-direnv.enable = true;
+
+  programs.direnv = {
+    enable = true;
+    loadInNixShell = true;
+    nix-direnv.enable = true;
+  };
 
   services.xserver = {
     layout = "us";
@@ -48,21 +70,25 @@ in {
       description = "basegbot";
       extraGroups = ["networkmanager" "wheel"];
       packages = with pkgs; [
+        basegbot
         git
         helix
         lazygit
         croc
-        basegbot
       ];
     };
   };
 
   nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
     settings = {
       extra-experimental-features = ["flakes" "nix-command"];
       auto-optimise-store = true;
       builders-use-substitutes = true;
-      keep-derivations = true;
       keep-outputs = true;
       allowed-users = ["@wheel"];
       trusted-users = ["root" "@wheel"];
@@ -77,5 +103,6 @@ in {
 
   nixpkgs.config.allowUnfree = true;
 
+  system.autoUpgrade.enable = false;
   system.stateVersion = "23.05";
 }
