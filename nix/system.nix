@@ -44,8 +44,9 @@ in {
     enable = true;
     settings = {
       PermitRootLogin = lib.mkForce "no";
-      PasswordAuthentication = lib.mkForce "false";
-      PubkeyAuthentication = lib.mkForce "true";
+      KbdInteractiveAuthentication = false;
+      PasswordAuthentication = lib.mkForce false;
+      PubkeyAuthentication = lib.mkForce true;
     };
   };
 
