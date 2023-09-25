@@ -79,13 +79,16 @@ in {
       ];
     };
   };
+  nh = {
+    enable = true;
+    clean = {
+      enable = true;
+      dates = "weekly";
+      extraArgs = "--keep-since 3d --keep 5";
+    };
+  };
 
   nix = {
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 7d";
-    };
     settings = {
       extra-experimental-features = ["flakes" "nix-command"];
       auto-optimise-store = true;
