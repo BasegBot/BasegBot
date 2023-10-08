@@ -19,12 +19,14 @@
   in {
     devShells.${system}.default = pkgs.mkShell {
       name = "basegbot-devenv";
+      buildInputs = with pkgs; [
+        rustc
+        cargo
+      ];
       packages = with pkgs; [
         nil
         alejandra
         clippy
-        cargo
-        rustc
         rustup
         rustfmt
         rust-analyzer
