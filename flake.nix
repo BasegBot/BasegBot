@@ -19,19 +19,19 @@
   in {
     devShells.${system}.default = pkgs.mkShell {
       name = "basegbot-devenv";
-      buildInputs = with pkgs; [
-        rustc
-        cargo
-      ];
       packages = with pkgs; [
         nil
         alejandra
         clippy
+        rustc
+        cargo
         rustup
         rustfmt
         rust-analyzer
         crate2nix
       ];
+      RUST_BACKTRACE = 1;
+      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
     };
     nixosConfigurations = {
       basegbot = lib.nixosSystem {
