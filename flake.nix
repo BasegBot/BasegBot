@@ -2,18 +2,22 @@
   description = "basegbot flake";
 
   inputs = {
-    nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
-    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    fenix.url = "github:nix-community/fenix/monthly";
     nh = {
       url = "github:viperML/nh";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = {nixpkgs, ...} @ inputs: let
+  outputs = {
+    nixpkgs,
+    fenix,
+    ...
+  } @ inputs: let
     system = "x86_64-linux";
+    overlays = [fenix.overlays.default];
     pkgs = import nixpkgs {
-      inherit system;
+      inherit system overlays;
     };
     lib = nixpkgs.lib;
   in {
@@ -22,16 +26,18 @@
       packages = with pkgs; [
         nil
         alejandra
-        clippy
-        rustc
-        cargo
-        rustup
-        rustfmt
-        rust-analyzer
+        rust-analyzer-nightly
         crate2nix
+        (fenix.packages.${system}.complete.withComponents [
+          "cargo"
+          "clippy"
+          "rust-src"
+          "rustc"
+          "rustfmt"
+        ])
       ];
       RUST_BACKTRACE = 1;
-      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+      RUST_SRC_PATH = "${fenix.packages.${system}.complete.rust-src}/lib/rustlib/src/rust/library";
     };
     nixosConfigurations = {
       basegbot = lib.nixosSystem {
