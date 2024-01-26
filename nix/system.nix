@@ -2,10 +2,7 @@
   pkgs,
   lib,
   ...
-}: let
-  cargo_nix = pkgs.callPackage ../Cargo.nix {};
-  basegbot = cargo_nix.rootCrate.build;
-in {
+}: {
   imports = [
     ./hw-config.nix
     ./security.nix
@@ -43,7 +40,7 @@ in {
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = lib.mkForce "no";
+      PermitRootLogin = true;
       KbdInteractiveAuthentication = false;
       PasswordAuthentication = lib.mkForce false;
       PubkeyAuthentication = lib.mkForce true;
@@ -71,7 +68,6 @@ in {
       description = "basegbot";
       extraGroups = ["networkmanager" "wheel"];
       packages = with pkgs; [
-        basegbot
         git
         helix
         lazygit
@@ -97,9 +93,11 @@ in {
       allowed-users = ["@wheel"];
       trusted-users = ["root" "@wheel"];
       substituters = [
+        "https://cache.flake.sh/kyasshu"
         "https://cache.nixos.org"
       ];
       trusted-public-keys = [
+        "kyasshu:g1heIgCgG7M4San6nRsz/omcVQ1GTc7+zKKm3L9Co7o="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
     };

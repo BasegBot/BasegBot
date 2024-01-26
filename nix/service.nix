@@ -1,4 +1,7 @@
-_: {
+{pkgs, ...}: let
+  cargo_nix = pkgs.callPackage ../Cargo.nix {};
+  basegbot = cargo_nix.rootCrate.build;
+in {
   systemd.services.basegbot = {
     enable = true;
     wantedBy = [
@@ -8,7 +11,7 @@ _: {
 
     serviceConfig = {
       User = "root";
-      ExecStart = "/etc/profiles/per-user/basegbot/bin/basegbot";
+      ExecStart = "${basegbot}/bin/basegbot";
       Restart = "on-failure";
       RestartSec = 60;
     };
